@@ -40,6 +40,15 @@ import keras # uses the TensorFlow backend (i.e. uses TensorFlow to create the n
 from keras.models import Sequential # we use this to initialize the neural network
 from keras.layers import Dense # we use this to create the layers in the neural network
 
+# Note: Using dropout regularization reduces overfitting. Our neural network
+# did not overfit because we had low variance on the accuracies from the k-fold
+# cross validation, but we will still use it here.
+#
+# We can apply dropout to one layer, or multiple layers. When the model is
+# overfitting, it's best to apply dropout to all of the layers. But in this
+# particular case, we will apply it to only the hidden layers.
+from keras.layers import Dropout
+
 # In order to initialize the neural network, we define it as a sequence of
 # layers. As an alternative approach, we could also define it as a graph.
 classifier = Sequential()
@@ -92,8 +101,17 @@ classifier = Sequential()
 # Add the first hidden layer
 classifier.add(Dense(output_dim = 6, init = "uniform", activation = "relu", input_dim = 11))
 
+# p : The fraction of input neurons you want to disable at each iteration. If
+#     the model is overfitting, it is best to start with a value of 0.1, and if
+#     that doesn't solve the problem, we should try higher values. However, this
+#     value should not be above 0.5, because in that case, too many neurons will
+#     be disabled, and thus there will not be enough neurons left to learn much,
+#     which will result in underfitting.
+classifier.add(Dropout(p = 0.1))
+
 # Add the second hidden layer
 classifier.add(Dense(output_dim = 6, init = "uniform", activation = "relu"))
+classifier.add(Dropout(p = 0.1))
 
 # Add the output layer
 classifier.add(Dense(output_dim = 1, init = "uniform", activation = "sigmoid"))
@@ -133,6 +151,9 @@ classifier.compile(optimizer = "adam", loss = "binary_crossentropy", metrics = [
 classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 100)
 print("")
 
+# ==========================================================================
+# Part 3 - Making Predictions and Evaluating the Model
+# ==========================================================================
 # Predict the test set results
 y_pred = classifier.predict(X_test)
 y_pred = (y_pred > 0.5) # if probability > 0.5, predict 1 (0 otherwise)
@@ -141,6 +162,10 @@ y_pred = (y_pred > 0.5) # if probability > 0.5, predict 1 (0 otherwise)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred)
 print(cm)
+
+# ==========================================================================
+# Part 4 - Evaluating, Improving, and Tuning the ANN
+# ==========================================================================
 
 # Perform k-fold cross validation. Since the function for cross validation
 # belongs to scikit-learn, and our neural network was developed from keras, we
