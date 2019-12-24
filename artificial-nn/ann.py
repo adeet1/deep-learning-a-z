@@ -141,3 +141,40 @@ y_pred = (y_pred > 0.5) # if probability > 0.5, predict 1 (0 otherwise)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred)
 print(cm)
+
+# Perform k-fold cross validation. Since the function for cross validation
+# belongs to scikit-learn, and our neural network was developed from keras, we
+# need a wrapper, which will wrap the scikit-learn cross validation function
+# into the keras module.
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import cross_val_score
+
+# The KerasClassifier function above expects a function as one of its arguments.
+# THis argument is BuildFn or Build Function. This Build function will simply
+# return the classifier model we made above, with all its architecture. So the
+# build function just builds the architecture for our artificial neural network.
+def build_classifier():
+    classifier = Sequential()
+    classifier.add(Dense(output_dim = 6, init = "uniform", activation = "relu", input_dim = 11))
+    classifier.add(Dense(output_dim = 6, init = "uniform", activation = "relu"))
+    classifier.add(Dense(output_dim = 1, init = "uniform", activation = "sigmoid"))
+    classifier.compile(optimizer = "adam", loss = "binary_crossentropy", metrics = ["accuracy"])
+    return classifier
+
+classifier = KerasClassifier(build_fn = build_classifier, batch_size = 10, nb_epoch = 100)
+
+# cross_val_score returns the 10 accuracies of the 10 test folds that occur in
+# k-fold cross validation.
+# X : The training set, from which we are going to create 10 train/test folds,
+#     on which k-fold cross validation will be applied.
+# cv : The number of folds.
+# n_jobs : Very important parameter when doing k-fold cross validation on deep
+#          learning models. Specifying -1 will use all CPUs (perform parallel
+#          computations), which will make the training process faster.
+accuracies = cross_val_score(estimator = classifier, X = X_train, y = y_train,
+                             cv = 10, n_jobs = -1)
+
+# We want to check if our model is low bias-low variance (a high accuracy, and
+# small differences between various accuracies).
+mean = accuracies.mean()
+variance = accuracies.std()
