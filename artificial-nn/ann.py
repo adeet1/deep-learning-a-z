@@ -25,7 +25,7 @@ X = X[:, 1:] # remove one dummy variable to prevent multicollinearity
 
 # Splitting the dataset into the Training set and Test set
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
 
 # Feature Scaling (mandatory for most deep learning models)
 from sklearn.preprocessing import StandardScaler
@@ -122,3 +122,22 @@ classifier.add(Dense(output_dim = 1, init = "uniform", activation = "sigmoid"))
 # Compile the neural network (compile means to apply stochastic gradient descent
 # to the entire neural network)
 classifier.compile(optimizer = "adam", loss = "binary_crossentropy", metrics = ["accuracy"])
+
+# batch_size : The number of observations after which we want to update the
+#              weights. There is no rule of thumb for this; rather we need to
+#              experiment to find an optimal value.
+# nb_epoch : The number of epochs. An EPOCH is simply a round during which the
+#            entire training set is passed through the ANN.
+
+# Fit the ANN to the training set
+classifier.fit(X_train, y_train, batch_size = 10, nb_epoch = 100)
+print("")
+
+# Predict the test set results
+y_pred = classifier.predict(X_test)
+y_pred = (y_pred > 0.5) # if probability > 0.5, predict 1 (0 otherwise)
+
+# Making the confusion matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
