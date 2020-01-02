@@ -71,3 +71,20 @@ classifier.add(MaxPooling2D(pool_size = (2, 2)))
 # We don't need to specify any parameters here, because keras will know that the
 # previous layer needs to be flattened.
 classifier.add(Flatten())
+
+# Step 4 - Full Connection
+# output_dim : The number of nodes in the fully connected layer (hidden layer).
+#              We have chosen 128, although this is arbitrary. An ideal value is
+#              (# of nodes in input layer + # of nodes in output layer) / 2, but
+#              it is impractical to count the number of input nodes because it's
+#              too large.
+#
+#              Our goal is to choose a value that is large enough to make the
+#              classifier a good model, but not too large (or else the model
+#              will be very computationally intensive).
+
+# Add a fully connected layer
+classifier.add(Dense(output_dim = 128, activation = "relu"))
+
+# Add an output layer
+classifier.add(Dense(output_dim = 1, activation = "sigmoid"))
