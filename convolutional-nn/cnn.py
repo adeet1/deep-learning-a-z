@@ -58,3 +58,8 @@ classifier = Sequential()
 #              to eliminate any negative pixels (we need non-linearity in image
 #              classification).
 classifier.add(Convolution2D(nb_filter = 32, nb_row = 3, nb_col = 3, input_shape = (64, 64, 3), activation = "relu"))
+
+# Step 2 - Pooling
+# We apply max pooling on each of the feature maps we created in the previous
+# step.
+classifier.add(MaxPooling2D(pool_size = (2, 2)))
