@@ -63,3 +63,11 @@ classifier.add(Convolution2D(nb_filter = 32, nb_row = 3, nb_col = 3, input_shape
 # We apply max pooling on each of the feature maps we created in the previous
 # step.
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
+
+# Step 3 - Flattening
+# Our input layer will be very large. That's because even if we reduce the size
+# of the feature maps, we still have many feature maps.
+#
+# We don't need to specify any parameters here, because keras will know that the
+# previous layer needs to be flattened.
+classifier.add(Flatten())
