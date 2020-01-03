@@ -91,3 +91,46 @@ classifier.add(Dense(output_dim = 1, activation = "sigmoid"))
 
 # Compiling the CNN
 classifier.compile(optimizer = "adam", loss = "binary_crossentropy", metrics = ["accuracy"])
+
+# ==========================================================================
+# Part 2 - Fitting the CNN to the images
+# ==========================================================================
+from keras.preprocessing.image import ImageDataGenerator
+
+# This code was taken from the image preprocessing section in the Keras
+# documentation (https://keras.io/preprocessing/image/)
+train_datagen = ImageDataGenerator(
+        rescale=1./255, # rescale pixel values from range 0-255 to range 0-1
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True)
+
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+# target_size : The size of your images that is expected in the CNN.
+#
+# batch_size : The size of the batches in which some random samples of our
+#              images will be included, and that contains the number of images
+#              that will go through the CNN, after which the weight will be
+#              updated.
+#
+# class_mode : Whether your dependent variable is binary or has more than two
+#              categories.
+train_set = train_datagen.flow_from_directory(
+        'dataset/training_set',
+        target_size=(64, 64),
+        batch_size=32,
+        class_mode='binary')
+
+test_set = test_datagen.flow_from_directory(
+        'dataset/test_set',
+        target_size=(64, 64),
+        batch_size=32,
+        class_mode='binary')
+
+classifier.fit_generator(
+        train_set,
+        steps_per_epoch=8000,
+        epochs=25,
+        validation_data=test_set,
+        validation_steps=2000)
