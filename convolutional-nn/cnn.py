@@ -64,6 +64,15 @@ classifier.add(Convolution2D(nb_filter = 32, nb_row = 3, nb_col = 3, input_shape
 # step.
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
 
+# Add a second convolutional layer
+# The input of the second convolutional layer is not the 64 x 64 images, but
+# rather the pooled feature maps of the previous layer. So we will apply the
+# convolution and max pooling not on the images, but on the pooled feature
+# maps. Therefore, the shape of our input will come from the previous layer,
+# and so we don't need to specify an input_shape parameter.
+classifier.add(Convolution2D(nb_filter = 32, nb_row = 3, nb_col = 3, activation = "relu"))
+classifier.add(MaxPooling2D(pool_size = (2, 2)))
+
 # Step 3 - Flattening
 # Our input layer will be very large. That's because even if we reduce the size
 # of the feature maps, we still have many feature maps.
