@@ -112,3 +112,39 @@ for i, x in enumerate(X):
          markeredgewidth = 2)
     
 show()
+
+# Finding the frauds
+#
+# Unfortunately, minisom.py doesn't contain an inverse mapping function we can
+# use to directly get the list of customers from the coordinates of winning
+# nodes. But we can retrieve a dictionary, that contains all of the mappings
+# from the winning nodes to the customers.
+#
+# Each key in the dictionary is the coordinates of a particular winning node.
+# The value mapped to each key is a list containing the customers corresponding
+# to the associated winning node. Each element in the list is a NumPy array
+# containing the attributes of a particular customer. The first element in each
+# NumPy array is the SCALED value of the customer ID, but we can use the
+# inverse_transform() method to get the original customer ID.
+mappings = som.win_map(X)
+
+# Matrix of MID values
+dist = som.distance_map().T
+
+# Retrieve the winning nodes
+winning_nodes = []
+frauds = []
+for i in range(10):
+    for j in range(10):
+        # If the MID of a node is very close to 1, it's a winning node, so add
+        # it to the list
+        if dist[i][j] > 0.95:
+            winning_nodes.append((j, i))
+            node_map = mappings[(j, i)]
+            customers = sc.inverse_transform(node_map)
+            print(j, i, customers)
+            frauds.append(customers)
+
+# frauds now contains the table of customers (with their attributes) who
+# possibly cheated
+frauds = np.concatenate(tuple(frauds))
