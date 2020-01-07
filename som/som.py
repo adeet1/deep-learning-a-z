@@ -49,4 +49,22 @@ som.random_weights_init(X)
 # This is step 4 of 9
 #
 # num_iteration : The number of times we want to repeat steps 4 to 9.
-som.train_random(data = X, num_iteration = 100)
+som.train_random(data = X, num_iteration = 100)som.train_random(data = X, num_iteration = 100)
+
+# Visualize the results
+# We will color the winning nodes in such a way that the larger the MID is, the closer to white the color will be
+# We will need to plot the self-organizing map somewhat from scratch (we can't use matplotlib since this is a very specific type of plot)
+from pylab import bone, pcolor, colorbar, plot, show
+
+# Initialize the figure (the window that will contain the map)
+bone()
+
+# Put the various winning nodes on the map
+# We'll do this by putting on the map the information of the MID (Mean Interneuron Distance) for all the winning nodes that the SOM identified
+# We will not add the values of all these MIDs, but instead we will use colors (different colors will correspond to different range values of the MIDs).
+# The distance_map() method of the SOM object will return all of the MIDs in one matrix.
+pcolor(som.distance_map().T)
+
+# We want to add a legend so that we can see what the different colors on the map represent
+# The white colors on the map correspond to the fraudulent cases (because this color represents high MID values)
+colorbar()
