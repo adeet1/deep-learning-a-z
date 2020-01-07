@@ -49,22 +49,66 @@ som.random_weights_init(X)
 # This is step 4 of 9
 #
 # num_iteration : The number of times we want to repeat steps 4 to 9.
-som.train_random(data = X, num_iteration = 100)som.train_random(data = X, num_iteration = 100)
+som.train_random(data = X, num_iteration = 100)
 
 # Visualize the results
-# We will color the winning nodes in such a way that the larger the MID is, the closer to white the color will be
-# We will need to plot the self-organizing map somewhat from scratch (we can't use matplotlib since this is a very specific type of plot)
+# We will color the winning nodes in such a way that the larger the MID is, the
+# closer to white the color will be. We will need to plot the self-organizing
+# map somewhat from scratch (we can't use matplotlib since this is a very
+# specific type of plot).
 from pylab import bone, pcolor, colorbar, plot, show
 
 # Initialize the figure (the window that will contain the map)
 bone()
 
 # Put the various winning nodes on the map
-# We'll do this by putting on the map the information of the MID (Mean Interneuron Distance) for all the winning nodes that the SOM identified
-# We will not add the values of all these MIDs, but instead we will use colors (different colors will correspond to different range values of the MIDs).
-# The distance_map() method of the SOM object will return all of the MIDs in one matrix.
+#
+# We'll do this by putting on the map the information of the MID (Mean
+# Interneuron Distance) for all the winning nodes that the SOM identified. We
+# will not add the values of all these MIDs, but instead we will use colors
+# (different colors will correspond to different range values of the MIDs). The
+# distance_map() method of the SOM object will return all of the MIDs in one
+# matrix.
 pcolor(som.distance_map().T)
 
-# We want to add a legend so that we can see what the different colors on the map represent
-# The white colors on the map correspond to the fraudulent cases (because this color represents high MID values)
+# We want to add a legend so that we can see what the different colors on the
+# map represent. The white colors on the map correspond to the fraudulent cases
+# (because this color represents high MID values).
 colorbar()
+
+# Red circles = customers who didn't get approval
+# Green squares = customers who got approval
+#
+# We create a vector of two elements, which corresponds to the two markers we
+# want.
+markers = ['o', 's']
+colors = ['r', 'g']
+
+# Loop over all customers, and for each customer, we will get the winning node,
+# and depending on whether or not the customer got approval, we will color this
+# winning node by a red circle or a green square.
+#
+# i = different values of all the indexes of our customer database
+# x = different vectors of customers (i.e. rows in the dataset)
+for i, x in enumerate(X):
+    # Get the winning node for the current customer x
+    w = som.winner(x)
+    
+    # On this winning node, we will plot the marker.
+    #
+    # w[0] and w[1] are the x- and y-coordinates of the winning node,
+    # respectively. More specifically, these are the coordinate of the lower
+    # left corner of the square. We want to put these coordinates at the center
+    # of the square, so we need to add 0.5 to each coordinate to put it in the
+    # middle of the horizontal and vertical base of the square.
+    #
+    # We also need to know whether to put a red circle or green square.
+    plot(w[0] + 0.5,
+         w[1] + 0.5,
+         markers[y[i]],
+         markeredgecolor = colors[y[i]],
+         markerfacecolor = 'None',
+         markersize = 10,
+         markeredgewidth = 2)
+    
+show()
