@@ -25,3 +25,28 @@ y = dataset.iloc[:, -1].values
 from sklearn.preprocessing import MinMaxScaler
 sc = MinMaxScaler(feature_range = (0, 1))
 X = sc.fit_transform(X)
+
+# Train the SOM
+# A sklearn implementation of a SOM doesn't currently exist, so we need an
+# implementation from another developer
+from minisom import MiniSom
+
+# The MiniSom object is the self-organizing map itself.
+#
+# x, y : The dimensions of the map/grid.
+# input_len : The # of features in X.
+# sigma : The radius of the different neighborhoods in the grid.
+# learning_rate : Decides by how much the weights are updated during each
+#                 iteration.
+# decay_function : This can be used to improve the model's convergence.
+som = MiniSom(x = 10, y = 10, input_len = 15, sigma = 1.0, learning_rate = 0.5)
+
+# We need to initialize the weights before training the SOM on X
+som.random_weights_init(X)
+
+# Train the SOM on X (not X and y) because we're doing unsupervised learning
+# (the dependent variable is not considered).
+# This is step 4 of 9
+#
+# num_iteration : The number of times we want to repeat steps 4 to 9.
+som.train_random(data = X, num_iteration = 100)
