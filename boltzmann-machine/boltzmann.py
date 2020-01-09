@@ -77,8 +77,28 @@ training_set = convert(training_set)
 test_set = convert(test_set)
 
 # Convert the data into Torch tensors
+#
 # Tensors are simply arrays that contain elements of a single data type
-# A tensor is a multi-dimensional matrix, but instead of being a numpy array, it's a pytorch array
+#
+# A tensor is a multi-dimensional matrix, but instead of being a numpy array,
+# it's a pytorch array.
+#
 # Building a neural network with numpy arrays is less efficient
 training_set = torch.FloatTensor(training_set)
 test_set = torch.FloatTensor(test_set)
+
+# Convert the ratings into binary ratings 1 (liked) and 0 (disliked)
+
+# Replace all ratings of unrated movies with -1 (a sentinel value)
+training_set[training_set == 0] = -1
+test_set[test_set == 0] = -1
+
+# 1 or 2 star rating --> user didn't like the movie
+training_set[training_set == 1] = 0
+training_set[training_set == 2] = 0
+test_set[test_set == 1] = 0
+test_set[test_set == 2] = 0
+
+# 3, 4, or 5 star rating --> user liked the movie
+training_set[training_set >= 3] = 1
+test_set[test_set >= 3] = 1
