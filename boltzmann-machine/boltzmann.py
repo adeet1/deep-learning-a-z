@@ -118,3 +118,22 @@ class RBM():
         self.W = torch.randn(nh, nv)
         self.a = torch.randn(1, nh) # bias for the probabilities of the hidden nodes given the visible nodes
         self.b = torch.randn(1, nv) # bias for the probabilities
+
+    # Function for sampling the hidden nodes according to the probabilities
+    # p(h | v), where h is a hidden node and v is a visible node
+    #
+    # p(h | v) = sigmoid activation function
+    #
+    # During training we will use Gibbs sampling to approximate the log
+    # likelihood gradient
+    def sample_h(self, x):
+        # Compute the probability that the hidden node = 1, given the values of the visible nodes
+        wx = torch.mm(x, self.W.t()) # multiply the weights (W) by the nodes (x)
+        activation = wx + self.a.expand_as(wx) # make sure that the bias is applied to each line of the mini-batch
+        
+        # A vector of nh elements, i.e. the number of hidden nodes (each
+        # element is the probability that that particular hidden node is
+        # activated, given the values of the visible nodes)
+        p_h_given_v = torch.sigmoid(activation)
+        
+        return p_h_given_v, torch.bernoulli(p_h_given_v)
