@@ -75,3 +75,10 @@ def convert(data):
 
 training_set = convert(training_set)
 test_set = convert(test_set)
+
+# Convert the data into Torch tensors
+# Tensors are simply arrays that contain elements of a single data type
+# A tensor is a multi-dimensional matrix, but instead of being a numpy array, it's a pytorch array
+# Building a neural network with numpy arrays is less efficient
+training_set = torch.FloatTensor(training_set)
+test_set = torch.FloatTensor(test_set)
