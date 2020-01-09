@@ -31,3 +31,14 @@ users = pd.read_csv("ml-1m/users.dat", sep = "::", header = None,
 # Import ratings dataset
 ratings = pd.read_csv("ml-1m/ratings.dat", sep = "::", header = None,
                       engine = "python", encoding = "latin-1")
+
+# Prepare the training and test sets
+#
+# Multiple sets of train-test splits have been provided in order to facilitate
+# k-fold cross validation
+
+training_set = pd.read_csv("ml-100k/u1.base", delimiter = "\t", header = None)
+training_set = np.array(training_set, dtype = "int") # convert the dataframe to an array of integers
+
+test_set = pd.read_csv("ml-100k/u1.test", delimiter = "\t", header = None)
+test_set = np.array(test_set, dtype = "int") # convert the dataframe to an array of integers
