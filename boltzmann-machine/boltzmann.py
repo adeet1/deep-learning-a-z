@@ -117,7 +117,7 @@ class RBM():
         # distribution.
         self.W = torch.randn(nh, nv)
         self.a = torch.randn(1, nh) # bias for the probabilities of the hidden nodes given the visible nodes
-        self.b = torch.randn(1, nv) # bias for the probabilities
+        self.b = torch.randn(1, nv) # bias for the probabilities of the visible nodes given the hidden nodes
 
     # Function for sampling the hidden nodes according to the probabilities
     # p(h | v), where h is a hidden node and v is a visible node
@@ -137,3 +137,11 @@ class RBM():
         p_h_given_v = torch.sigmoid(activation)
         
         return p_h_given_v, torch.bernoulli(p_h_given_v)
+    
+    def sample_v(self, y):
+        wy = torch.mm(y, self.W)
+        activation = wy + self.b.expand_as(wy)
+
+        p_v_given_h = torch.sigmoid(activation)
+        
+        return p_v_given_h, torch.bernoulli(p_v_given_h)
