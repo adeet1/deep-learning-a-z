@@ -145,3 +145,8 @@ class RBM():
         p_v_given_h = torch.sigmoid(activation)
         
         return p_v_given_h, torch.bernoulli(p_v_given_h)
+    
+    def train(self, v0, vk, ph0, phk):
+        self.W += torch.mm(v0.t(), ph0) - torch.mm(vk.t(), phk)
+        self.b += torch.sum((v0 - vk), 0) # keeps the format of b as a tensor of 2 dimensions
+        self.a += torch.sum((ph0 - phk), 0)
