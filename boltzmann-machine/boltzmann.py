@@ -102,3 +102,19 @@ test_set[test_set == 2] = 0
 # 3, 4, or 5 star rating --> user liked the movie
 training_set[training_set >= 3] = 1
 test_set[test_set >= 3] = 1
+
+# Create the architecture of the neural network (the RBM)
+# The RBM is a probabilistic graphical model
+class RBM():
+    # nv = number of visible nodes
+    # nh = number of hidden nodes
+    def __init__(self, nv, nh):
+        # Initialize weights and biases, which will be optimized during training
+        
+        # Initialize all weights in a torch tensor (the weights are the
+        # probabilities of the visible nodes, given the hidden nodes). All
+        # weights need to be initialized randomly according to a normal
+        # distribution.
+        self.W = torch.randn(nh, nv)
+        self.a = torch.randn(1, nh) # bias for the probabilities of the hidden nodes given the visible nodes
+        self.b = torch.randn(1, nv) # bias for the probabilities
