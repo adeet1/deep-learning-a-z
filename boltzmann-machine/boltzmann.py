@@ -46,3 +46,32 @@ test_set = np.array(test_set, dtype = "int") # convert the dataframe to an array
 # Get the number of users and movies
 nb_users = int(max(max(training_set[:, 0]), max(test_set[:, 0]))) # the maximum user ID
 nb_movies = int(max(max(training_set[:, 1]), max(test_set[:, 1]))) # the maximum movie ID
+
+# Convert the data into a list of lists, with users in rows and movies in
+# columns
+def convert(data):
+    new_data = []
+    
+    # Create a list for each user
+    for id_users in range(1, nb_users + 1):
+        # For each user, we want to obtain all the ratings they gave
+        id_movies = data[:, 1][data[:, 0] == id_users] # all of the movies that were rated by this user
+        id_ratings = data[:, 2][data[:, 0] == id_users] # all of the movies that were rated by this user
+        
+        # Initialize ratings vector
+        ratings = np.zeros(nb_movies)
+        
+        # Fill ratings vector with the appropriate ratings (we want to access
+        # the index values of ratings that exist, i.e. id_movies)
+        #
+        # Subtract 1 because the first rating in the vector (the rating of
+        # movie ID 1) is the first element of the vector, which is at index 0
+        ratings[id_movies - 1] = id_ratings
+        
+        # Add the list of ratings to new_data
+        new_data.append(list(ratings))
+    
+    return new_data
+
+training_set = convert(training_set)
+test_set = convert(test_set)
