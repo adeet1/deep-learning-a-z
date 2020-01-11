@@ -99,3 +99,25 @@ for epoch in range(1, nb_epoch + 1):
             optimizer.step()
     
     print("epoch:", epoch, " ", "loss:", train_loss/s)
+    
+# Test the SAE
+test_loss = 0
+s = 0.
+for id_user in range(nb_users):
+    input = Variable(training_set[id_user]).unsqueeze(0)
+    target = Variable(test_set[id_user])
+    
+    # Optimize memory
+    # If the observation contains at least one non-zero rating
+    if torch.sum(target.data > 0) > 0: 
+        output = sae(input) # get the vector of predicted ratings (the output of the model)
+        target.require_grad = False
+        output[target == 0] = 0
+        
+        loss = criterion(output, target)
+        mean_corrector = nb_movies / float(torch.sum(target.data > 0) + 1e-10) # add 1e-10 to prevent division by zero
+        test_loss += np.sqrt(loss.data * mean_corrector)
+        s += 1.
+        optimizer.step()
+        
+    print("test loss:", test_loss/s)
