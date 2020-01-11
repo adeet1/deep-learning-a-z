@@ -28,3 +28,10 @@ for i in range(60, len(train)):
     Y_train.append(train_sc[i, 0].reshape(-1,))
 
 X_train, Y_train = np.array(X_train), np.array(Y_train)
+
+# Reshape the data (add more dimensionality to the data structure created above)
+X_train = np.reshape(X_train,
+                     (X_train.shape[0], # of observations
+                      X_train.shape[1], # number of time steps
+                      1) # of indicators (predictors)
+                     )
