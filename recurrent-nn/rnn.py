@@ -60,3 +60,5 @@ regressor.add(LSTM(units = 50, # 50 neurons
                    )
              )
 
+# Add dropout regularization (to prevent overfitting)
+regressor.add(Dropout(rate = 0.2)) # ignore 20% of neurons of the LSTM layer during training
