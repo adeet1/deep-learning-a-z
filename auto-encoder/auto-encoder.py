@@ -35,6 +35,29 @@ def convert(data):
 training_set = convert(training_set)
 test_set = convert(test_set)
 
-# Converting the data into Torch tensors
+# Convert the data into Torch tensors
 training_set = torch.FloatTensor(training_set)
 test_set = torch.FloatTensor(test_set)
+
+# Create the architecture of the neural network
+# The stacked autoencoder class will be a child class of Module (inheritance)
+class SAE(nn.Module): # inherit from nn.Module
+    def __init__(self, ):
+        super(SAE, self).__init__()
+        
+        # parameter 1: number of features --> nb_movies
+        # parameter 2: number of nodes in the first hidden layer --> 20
+        self.fc1 = nn.Linear(nb_movies, 20) # full connection 1
+        
+        # Connection between the 1st and 2nd hidden layers
+        # 20 nodes in the 1st hidden layer, 10 nodes in the 2nd hidden layer
+        self.fc2 = nn.Linear(20, 10) # full connection 2
+        
+        # Here, we start to decode (reconstruct the original input vector)
+        self.fc3 = nn.Linear(10, 20) # full connection 3
+        
+        # Output layer
+        self.fc4 = nn.Linear(20, nb_movies) # full connection 4
+        
+        # Define an activation function
+        self.activation = nn.Sigmoid()
