@@ -62,6 +62,7 @@ class SAE(nn.Module): # inherit from nn.Module
         # Define an activation function
         self.activation = nn.Sigmoid()
         
+    # Returns the output of the network
     def forward(self, x): # forward propagation, where encoding and decoding takes place
         # To do encoding, we apply the activation function on the first full connection
         x = self.activation(self.fc1(x)) # returns the encoded vector
@@ -69,3 +70,32 @@ class SAE(nn.Module): # inherit from nn.Module
         x = self.activation(self.fc3(x)) # decode the 10-element vector into a 20-element vector
         x = self.fc4(x) # when reconstructing the input vector, you don't use the activation function
         return x
+
+sae = SAE()
+criterion = nn.MSELoss() # criterion for the loss function
+optimizer = optim.RMSprop(sae.parameters(), lr = 0.01, weight_decay = 0.5) # lr = learning rate
+
+# Train the SAE
+nb_epoch = 200
+for epoch in range(1, nb_epoch + 1):
+    train_loss = 0
+    s = 0.
+    for id_user in range(nb_users):
+        input = Variable(training_set[id_user]).unsqueeze(0)
+        target = input.clone() # the input and target are now identical
+        
+        # Optimize memory
+        # If the observation contains at least one non-zero rating
+        if torch.sum(target.data > 0) > 0: 
+            output = sae(input) # get the vector of predicted ratings (the output of the model)
+            target.require_grad = False
+            output[target == 0] = 0
+            
+            loss = criterion(output, target)
+            mean_corrector = nb_movies / float(torch.sum(target.data > 0) + 1e-10) # add 1e-10 to prevent division by zero
+            loss.backward()
+            train_loss += np.sqrt(loss.data * mean_corrector)
+            s += 1.
+            optimizer.step()
+    
+    print("epoch:", epoch, " ", "loss:", train_loss/s)
