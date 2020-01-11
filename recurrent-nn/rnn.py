@@ -2,6 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# ==========================================================================
+# Part 1 - Data Preprocessing
+# ==========================================================================
+
 # Import the training set
 train = pd.read_csv("Google_Stock_Price_Train.csv").loc[:, "Open"].values
 train = train.reshape(-1, 1) # convert from dim (1258,) to (1258, 1)
@@ -35,3 +39,24 @@ X_train = np.reshape(X_train,
                       X_train.shape[1], # number of time steps
                       1) # of indicators (predictors)
                      )
+
+# ==========================================================================
+# Part 2 - Build the RNN (LSTM)
+# ==========================================================================
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from keras.layers import Dropout
+
+# Initialize RNN
+regressor = Sequential()
+
+# Add the first LSTM layer
+# We need a high dimensionality to be able to pick up on sophisticated stock
+# price trends
+regressor.add(LSTM(units = 50, # 50 neurons
+                   return_sequences = True, # needs to be True if adding multiple LSTM layers
+                   input_shape = (X_train.shape[1], 1)
+                   )
+             )
+
