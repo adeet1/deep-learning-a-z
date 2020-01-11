@@ -61,3 +61,11 @@ class SAE(nn.Module): # inherit from nn.Module
         
         # Define an activation function
         self.activation = nn.Sigmoid()
+        
+    def forward(self, x): # forward propagation, where encoding and decoding takes place
+        # To do encoding, we apply the activation function on the first full connection
+        x = self.activation(self.fc1(x)) # returns the encoded vector
+        x = self.activation(self.fc2(x))
+        x = self.activation(self.fc3(x)) # decode the 10-element vector into a 20-element vector
+        x = self.fc4(x) # when reconstructing the input vector, you don't use the activation function
+        return x
