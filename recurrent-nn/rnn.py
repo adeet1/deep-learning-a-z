@@ -80,3 +80,7 @@ regressor.add(Dense(units = 1))
 
 # Compile the RNN
 regressor.compile(optimizer = "adam", loss = "mean_squared_error")
+
+# Fit the RNN to the training set
+regressor.fit(X_train, Y_train, epochs = 100, batch_size = 32)
+
