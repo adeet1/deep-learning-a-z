@@ -119,3 +119,11 @@ X_test = np.reshape(X_test,
 pred_price = regressor.predict(X_test)
 pred_price = sc.inverse_transform(pred_price)
 
+# Visualize results
+plt.plot(actual_price, color = "red", label = "Actual Google Stock Price")
+plt.plot(pred_price, color = "blue", label = "Predicted Google Stock Price")
+plt.title("Google Stock Price Prediction")
+plt.xlabel("Date")
+plt.ylabel("Price")
+plt.legend()
+plt.show()
