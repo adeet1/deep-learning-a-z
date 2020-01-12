@@ -74,3 +74,6 @@ regressor.add(Dropout(rate = 0.2))
 # Add a fourth LSTM layer and dropout regularization
 regressor.add(LSTM(units = 50))
 regressor.add(Dropout(rate = 0.2))
+
+# Add the output layer
+regressor.add(Dense(units = 1))
