@@ -7,13 +7,13 @@ import pandas as pd
 # ==========================================================================
 
 # Import the training set
-train = pd.read_csv("Google_Stock_Price_Train.csv").loc[:, "Open"].values
-train = train.reshape(-1, 1) # convert from dim (1258,) to (1258, 1)
+dataset_train = pd.read_csv("Google_Stock_Price_Train.csv")
+training_set = dataset_train.iloc[:, 1:2].values
 
 # Feature scaling
 from sklearn.preprocessing import MinMaxScaler
 sc = MinMaxScaler(feature_range = (0, 1)) # normalization
-train_sc = sc.fit_transform(train) # normalized training set
+training_set_scaled = sc.fit_transform(training_set) # normalized training set
 
 # Create a data structure with 60 timesteps and 1 output
 #
@@ -25,11 +25,11 @@ train_sc = sc.fit_transform(train) # normalized training set
 # next day's stock price
 X_train = []
 Y_train = []
-for i in range(60, len(train)):
+for i in range(60, len(training_set)):
     # We start the loop at i = 60 because we need the previous 60 days' stock
     # prices
-    X_train.append(train_sc[i - 60:i].reshape(-1,))
-    Y_train.append(train_sc[i, 0].reshape(-1,))
+    X_train.append(training_set_scaled[i - 60:i, 0])
+    Y_train.append(training_set_scaled[i, 0])
 
 X_train, Y_train = np.array(X_train), np.array(Y_train)
 
