@@ -84,3 +84,38 @@ regressor.compile(optimizer = "adam", loss = "mean_squared_error")
 # Fit the RNN to the training set
 regressor.fit(X_train, Y_train, epochs = 100, batch_size = 32)
 
+# ==========================================================================
+# Part 3 - Make Predictions and Visualize Results
+# ==========================================================================
+
+# Get the real stock prices of 2017
+dataset_test = pd.read_csv("Google_Stock_Price_Test.csv")
+actual_price = dataset_test.loc[:, "Open"].values
+actual_price = actual_price.reshape(-1, 1)
+
+# Get the predicted stock prices
+#
+# For each day of January 2017, we need the 60 previous days' stock prices.
+# However, some of these previous prices will be from the training set, and
+# some from the test set. Thus, we need to concatenate the two datasets.
+dataset_total = pd.concat((dataset_train["Open"], dataset_test["Open"]),
+                          axis = 0 # concatenate vertically (rows)
+                          )
+inputs = dataset_total[len(dataset_total) - len(dataset_test) - 60:].values
+inputs = inputs.reshape(-1, 1)
+inputs = sc.transform(inputs) # don't use fit_transform here (we use fit only on the training set)
+
+X_test = []
+for i in range(60, 80):
+    X_test.append(inputs[i - 60:i, 0])
+
+X_test = np.array(X_test)
+X_test = np.reshape(X_test,
+                     (X_test.shape[0],
+                      X_test.shape[1], 
+                      1)
+                     )
+
+pred_price = regressor.predict(X_test)
+pred_price = sc.inverse_transform(pred_price)
+
